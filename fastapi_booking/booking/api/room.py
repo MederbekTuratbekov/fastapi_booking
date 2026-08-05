@@ -16,7 +16,7 @@ async def get_db():
         db.close()
 
 @room_router.post('/', response_model=RoomSchema)
-async def room_create(room: RoomSchema, db: Session = Depends(get_db)):
+async def room_create(room: RoomCreateSchema, db: Session = Depends(get_db)):
     db_room = Room(**room.dict())
     db.add(db_room)
     db.commit()
