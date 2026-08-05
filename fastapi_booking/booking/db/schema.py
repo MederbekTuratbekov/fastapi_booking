@@ -40,6 +40,7 @@ class UserProfileGetSchema(UserProfileSchema):
 
 class CountryCreateSchema(BaseModel):
     country_name: str
+    user_id: Optional[int] = None
 
     class Config:
         from_attributes = True
