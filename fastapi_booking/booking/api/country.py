@@ -1,5 +1,5 @@
 from fastapi import Depends, HTTPException, APIRouter
-from booking.db.models import Country
+from booking.db.models import Country, UserProfile
 from booking.db.schema import CountrySchema, CountryCreateSchema
 from booking.db.database import SessionLocal
 from typing import List
@@ -17,7 +17,12 @@ async def get_db():
 
 @country_router.post('/', response_model=CountrySchema)
 async def country_create(country: CountryCreateSchema, db: Session = Depends(get_db)):
-    db_country = Country(country_name=country.country_name)
+    if country.user_id is not None:
+        user = db.query(UserProfile).filter(UserProfile.id == country.user_id).first()
+        if not user:
+            raise HTTPException(status_code=404, detail='User Not Found')
+
+    db_country = Country(country_name=country.country_name, user_id=country.user_id)
     db.add(db_country)
     db.commit()
     db.refresh(db_country)
@@ -40,6 +45,7 @@ def update_country(country_id: int, country: CountryCreateSchema, db: Session = 
     if db_country is None:
         raise HTTPException(status_code=404, detail='Country Not Found')
     db_country.country_name = country.country_name
+    db_country.user_id = country.user_id
     db.commit()
     return {'message': 'Updated'}
 
