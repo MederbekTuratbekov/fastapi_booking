@@ -4,6 +4,9 @@ import os
 load_dotenv()
 
 SECRET_KEY = os.getenv('SECRET_KEY')
+if not SECRET_KEY:
+    raise RuntimeError('SECRET_KEY не задан. Добавь его в .env файл')
+
 ACCESS_TOKEN_EXPIRE_MINUTES = 40
 REFRESH_TOKEN_EXPIRE_DAYS = 3
 ALGORITHM = "HS256"
