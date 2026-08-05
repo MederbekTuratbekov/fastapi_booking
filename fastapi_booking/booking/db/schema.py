@@ -4,6 +4,10 @@ from typing import Optional
 from .models import ROLE_CHOICES, STATUS_CHOICES, TYPE_CHOICE, STATUS_BOOK_CHOICES
 
 
+class TokenSchema(BaseModel):
+    refresh_token: str
+
+
 class UserProfileLoginSchema(BaseModel):
     username: str
     password: str
