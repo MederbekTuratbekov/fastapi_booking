@@ -35,7 +35,7 @@ async def hotel_detail(hotel_id: int, db: Session = Depends(get_db)):
     return db_hotel
 
 @hotel_router.put('/{hotel_id}/', response_model=dict)
-async def hotel_update(hotel_id: int, hotel: HotelSchema, db: Session = Depends(get_db)):
+async def hotel_update(hotel_id: int, hotel: HotelCreateSchema, db: Session = Depends(get_db)):
     db_hotel = db.query(Hotel).filter(Hotel.id == hotel_id).first()
     if not db_hotel:
         raise HTTPException(status_code=404, detail="Hotel Not Found")
