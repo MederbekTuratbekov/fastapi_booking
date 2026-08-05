@@ -38,9 +38,15 @@ class UserProfileGetSchema(UserProfileSchema):
         from_attributes = True
 
 
-class CountrySchema(BaseModel):
-    id: int
+class CountryCreateSchema(BaseModel):
     country_name: str
+
+    class Config:
+        from_attributes = True
+
+
+class CountrySchema(CountryCreateSchema):
+    id: int
 
     class Config:
         from_attributes = True
