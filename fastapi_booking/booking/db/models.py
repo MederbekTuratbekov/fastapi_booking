@@ -35,7 +35,7 @@ class UserProfile(Base):
     email: Mapped[str] = mapped_column(String, unique=True)
     age: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     phone_number: Mapped[Optional[str]] = mapped_column(String, nullable=True)
-    password: Mapped[str] = mapped_column(String, nullable=True)
+    password: Mapped[str] = mapped_column(String, nullable=False)
     role: Mapped[ROLE_CHOICES] = mapped_column(Enum(ROLE_CHOICES), default=ROLE_CHOICES.client)
     created_date: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
 
