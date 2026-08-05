@@ -4,7 +4,7 @@ from typing import Optional
 from sqlalchemy.orm import Session
 from jose import jwt
 from booking.db.models import UserProfile, RefreshToken
-from booking.db.schema import UserProfileSchema, UserProfileLoginSchema
+from booking.db.schema import UserProfileSchema, UserProfileLoginSchema, TokenSchema
 from passlib.context import CryptContext
 from booking.db.config import ALGORITHM, SECRET_KEY, ACCESS_TOKEN_EXPIRE_MINUTES, REFRESH_TOKEN_EXPIRE_DAYS
 from datetime import timedelta, timezone, datetime
@@ -77,8 +77,8 @@ async def login(form_data: UserProfileLoginSchema, db: Session = Depends(get_db)
 
 
 @auth_router.post('/logout')
-async def logout(refresh_token: str, db: Session = Depends(get_db)):
-    stored_token = db.query(RefreshToken).filter(RefreshToken.token == refresh_token).first()
+async def logout(payload: TokenSchema, db: Session = Depends(get_db)):
+    stored_token = db.query(RefreshToken).filter(RefreshToken.token == payload.refresh_token).first()
     if not stored_token:
         raise HTTPException(status_code=401, detail="Токен не найден")
     db.delete(stored_token)
@@ -87,8 +87,8 @@ async def logout(refresh_token: str, db: Session = Depends(get_db)):
 
 
 @auth_router.post('/refresh')
-async def refresh(refresh_token: str, db: Session = Depends(get_db)):
-    stored_token = db.query(RefreshToken).filter(RefreshToken.token == refresh_token).first()
+async def refresh(payload: TokenSchema, db: Session = Depends(get_db)):
+    stored_token = db.query(RefreshToken).filter(RefreshToken.token == payload.refresh_token).first()
     if not stored_token:
         raise HTTPException(status_code=401, detail="Токен не найден")
     access_token = create_access_token({"sub": stored_token.user.username})
