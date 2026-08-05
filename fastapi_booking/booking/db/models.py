@@ -69,7 +69,7 @@ class Country(Base):
 
     user_id: Mapped[Optional[int]] = mapped_column(ForeignKey('userprofile.id'), nullable=True)
     user: Mapped['UserProfile'] = relationship('UserProfile', back_populates='country_user')
-    hotel_country: Mapped[List['Hotel']] = relationship('Hotel', back_populates='country')
+    hotel_country: Mapped[List['Hotel']] = relationship('Hotel', back_populates='country', cascade='all, delete-orphan')
 
     def __repr__(self):
         return f'{self.country_name}'
