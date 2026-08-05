@@ -1,6 +1,6 @@
 from fastapi import Depends, HTTPException, APIRouter
 from booking.db.models import Country
-from booking.db.schema import CountrySchema
+from booking.db.schema import CountrySchema, CountryCreateSchema
 from booking.db.database import SessionLocal
 from typing import List
 from sqlalchemy.orm import Session
@@ -16,7 +16,7 @@ async def get_db():
         db.close()
 
 @country_router.post('/', response_model=CountrySchema)
-async def country_create(country: CountrySchema, db: Session =  Depends(get_db)):
+async def country_create(country: CountryCreateSchema, db: Session = Depends(get_db)):
     db_country = Country(country_name=country.country_name)
     db.add(db_country)
     db.commit()
@@ -35,7 +35,7 @@ def get_country(country_id: int, db: Session = Depends(get_db)):
     return country
 
 @country_router.put('/{country_id}/', response_model=dict)
-def update_country(country_id: int, country: CountrySchema, db: Session = Depends(get_db)):
+def update_country(country_id: int, country: CountryCreateSchema, db: Session = Depends(get_db)):
     db_country = db.query(Country).filter(Country.id == country_id).first()
     if db_country is None:
         raise HTTPException(status_code=404, detail='Country Not Found')
