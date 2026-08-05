@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from booking.db.config import settings
 from booking.db.database import SessionLocal
 from booking.db.models import UserProfile, RefreshToken
+from sqlalchemy.exc import IntegrityError
 from booking.api.auth import create_access_token, create_refresh_token
 
 social_router = APIRouter(prefix='/oauth', tags=['Social Auth'])
@@ -58,7 +59,14 @@ def get_or_create_social_user(db: Session, email: str, first_name: str, lastname
         password=None,
     )
     db.add(user)
-    db.commit()
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        user = db.query(UserProfile).filter(UserProfile.email == email).first()
+        if not user:
+            raise
+        return user
     db.refresh(user)
     return user
 
